@@ -1,7 +1,17 @@
 from fastapi import FastAPI
 from cpf_gen.utils import generate_cpf, validate_cpf
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -26,7 +36,7 @@ async def cpf_generator_state(state_code: int = None, qtd: int = 1):
 
 
 # Verify CPF
-@app.get("/verify_cpf/{cpf}")
+@app.get("/validate_cpf/{cpf}")
 async def cpf_validator(cpf: str):
     result =  validate_cpf(cpf)
     if result:
