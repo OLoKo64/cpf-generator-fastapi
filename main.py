@@ -53,7 +53,6 @@ async def cpf_validator(cpf: str):
 # Validate multiple CPFs
 @app.post("/validate_cpf")
 async def cpf_validator_multiple(data: CpfList):
-    print(len(data.cpf_list))
     if len(data.cpf_list) > 100:
         return {"error": {"message": "Invalid CPF quantity, quantity must be a number between 1 and 100", "code": 410}}
     return [
