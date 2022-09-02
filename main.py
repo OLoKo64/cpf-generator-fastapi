@@ -6,18 +6,18 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "CPF Generator and Validator API, to see all the endpoints, go to /docs"}
+    return {"message": "CPF Generator and Validator API, to see all the endpoints, go to /docs", "source_code": "https://github.com/OLoKo64/cpf-generator-fastapi"}
 
 
 # Generate random CPF
 @app.get("/cpf")
-async def cpf(qtd: int = 1):
+async def cpf_generator(qtd: int = 1):
     return [generate_cpf() for _ in range(qtd)]
 
 
 # Generate random CPF based on state
 @app.get("/cpf/{state_code}")
-async def cpf(state_code: int = None, qtd: int = 1):
+async def cpf_generator_state(state_code: int = None, qtd: int = 1):
     if state_code < 0 or state_code > 9:
             return { "error": { "message": "Invalid CPF state code, state code must be a number between 0 and 9", "code": 408 } }
     if qtd > 100:
@@ -27,7 +27,7 @@ async def cpf(state_code: int = None, qtd: int = 1):
 
 # Verify CPF
 @app.get("/verify_cpf/{cpf}")
-async def cpf(cpf: str):
+async def cpf_validator(cpf: str):
     result =  validate_cpf(cpf)
     if result:
         return {"is-valid": True, "cpf": result, "message": "Valid CPF"}
