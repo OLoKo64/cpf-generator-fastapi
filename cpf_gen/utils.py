@@ -1,17 +1,14 @@
-from typing import List
 import random
 import string
 import functools
 from cpf_gen.cpf import Cpf
-from fastapi import HTTPException
+from re import search
 
 
-def generate_cpf(state: int = None) -> str:
-    cpf_seed = random_seed()
+def generate_cpf(*, starting_cpf: str = None, state: int = None) -> str:
+    cpf_seed = [int(num) for num in starting_cpf[:9]] if starting_cpf else random_seed()
 
     if state is not None:
-        if state < 0 or state > 9:
-            return HTTPException(status_code=406, detail="Invalid CPF, state code must be a number between 0 and 9")
         cpf_seed[8] = state
 
     sum_of_elements = functools.reduce(
@@ -25,6 +22,13 @@ def generate_cpf(state: int = None) -> str:
     cpf = Cpf(''.join(map(str, cpf_seed + [verifier_one, verifier_two])))
 
     return cpf.get_all_cpf()
+
+
+def validate_cpf(cpf: str) -> str:
+    cpf = cpf.replace(".", "").replace("-", "")
+    if len(cpf) == 11 and search(r'\d{11}', cpf):
+        return generate_cpf(starting_cpf=cpf) if cpf == generate_cpf(starting_cpf=cpf)["cpf"] else False
+    return False
 
 
 def random_seed() -> str:
